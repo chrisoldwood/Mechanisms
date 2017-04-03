@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Mechanisms.Tests
@@ -44,8 +45,10 @@ namespace Mechanisms.Tests
                 foreach (var test in nonSuccesses)
                 {
                     var outcome = (test.Failures != 0) ? "FAILED " : "UNKNOWN";
+                    var message = outcome + ": " + test.Name;
 
-                    Console.WriteLine(outcome + ": " + test.Name);
+                    DebugWriter.WriteLine(message);
+                    Console.WriteLine(message);
                 }
 
                 Console.Write("\n");
@@ -53,9 +56,12 @@ namespace Mechanisms.Tests
 
             var summary = String.Format("Test Results: {0} Passed {1} Failed {2} Unknown",
                                         successes, failures, unknown);
-
+            DebugWriter.WriteLine(summary);
             Console.WriteLine(summary);
+
             return (failures == 0) ? 0 : 1;
         }
+
+        private static readonly DefaultTraceListener DebugWriter = new DefaultTraceListener();
     }
 }
