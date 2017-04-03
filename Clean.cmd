@@ -9,6 +9,7 @@ if /i "%1" == "/?"     call :usage & exit /b 0
 :shallow_clean
 for /r %%d in (obj) do if exist "%%d" rmdir /s /q "%%d"
 for /r %%d in (bin) do if exist "%%d" rmdir /s /q "%%d"
+del /s *.sln.cache 1>nul 2>nul
 
 :deep_clean
 if /i "%1" == "--all" (
