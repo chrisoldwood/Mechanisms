@@ -18,7 +18,14 @@ namespace Mechanisms.Tests
             {
                 Assert.OnTestCaseStart(test);
 
-                test.Function();
+                try
+                {
+                    test.Function();
+                }
+                catch (Exception)
+                {
+                    test.RecordAssert(false);
+                }
 
                 if (test.Failures != 0)
                 {

@@ -7,6 +7,7 @@ namespace Tests
     {
         static int Main(string[] args)
         {
+            EnumerableExtensionsTests.Define();
             StringExtensionsTests.Define();
 
             return Runner.Run();
