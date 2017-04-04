@@ -5,7 +5,8 @@ namespace Tests.Extensions
 {
     public static class StringExtensionsTests
     {
-        public static void Define()
+        [TestCases]
+        public static void Emptiness()
         {
             Suite.Add("A string is empty when its length is 0", () =>
             {

@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Mechanisms.Tests
 {
     public static class Runner
     {
-        public static int Run()
+        public static int Run(Assembly testsAssembly)
         {
+            RegisterTestCases(testsAssembly);
+
             var successes = 0;
             var failures = 0;
             var unknown = 0;
@@ -67,6 +70,27 @@ namespace Mechanisms.Tests
             Console.WriteLine(summary);
 
             return (failures == 0) ? 0 : 1;
+        }
+
+        private static void RegisterTestCases(Assembly testsAssembly)
+        {
+            Type[] types = testsAssembly.GetTypes();
+
+            foreach (var type in types)
+            {
+                MemberInfo[] members = type.GetMembers(BindingFlags.Static|BindingFlags.Public);
+
+                foreach (var member in members)
+                {
+                    Debug.Assert(member is MethodInfo);
+
+                    Attribute[] attributes = Attribute.GetCustomAttributes(member, typeof(TestCasesAttribute));
+
+                    Debug.Assert(attributes.Length == 1);
+
+                    ((MethodInfo)member).Invoke(null, new object[0]);
+                }
+            }
         }
 
         private static readonly DefaultTraceListener DebugWriter = new DefaultTraceListener();

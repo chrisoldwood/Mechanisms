@@ -1,5 +1,5 @@
-﻿using Mechanisms.Tests;
-using Tests.Extensions;
+﻿using System.Reflection;
+using Mechanisms.Tests;
 
 namespace Tests
 {
@@ -7,10 +7,7 @@ namespace Tests
     {
         static int Main(string[] args)
         {
-            EnumerableExtensionsTests.Define();
-            StringExtensionsTests.Define();
-
-            return Runner.Run();
+            return Runner.Run(Assembly.GetExecutingAssembly());
         }
     }
 }
