@@ -29,6 +29,11 @@ namespace Mechanisms.Tests
                 Function = function;
             }
 
+            public void RecordPass()
+            {
+                ++Successes;
+            }
+
             public void RecordAssert(bool succeeded)
             {
                 if (succeeded)

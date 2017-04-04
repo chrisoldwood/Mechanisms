@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Mechanisms.Contracts;
 
 namespace Mechanisms.Tests
 {
@@ -82,11 +83,11 @@ namespace Mechanisms.Tests
 
                 foreach (var member in members)
                 {
-                    Debug.Assert(member is MethodInfo);
+                    Enforce.True(member is MethodInfo, "member is MethodInfo");
 
                     Attribute[] attributes = Attribute.GetCustomAttributes(member, typeof(TestCasesAttribute));
 
-                    Debug.Assert(attributes.Length == 1);
+                    Enforce.True(attributes.Length == 1, "attributes.Length == 1");
 
                     ((MethodInfo)member).Invoke(null, new object[0]);
                 }

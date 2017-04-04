@@ -8,7 +8,7 @@ namespace Tests.Extensions
     public static class EnumerableExtensionsTests
     {
         [TestCases]
-        public static void Conversions()
+        public static void conversions()
         {
             Suite.Add("A sequence can be converted to a hash set", () =>
             {

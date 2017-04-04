@@ -4,6 +4,11 @@ namespace Mechanisms.Tests
 {
     public static class Assert
     {
+        public static void Pass()
+        {
+            _currentTest.RecordPass();
+        }
+
         public static void True(bool result)
         {
             _currentTest.RecordAssert(result);
