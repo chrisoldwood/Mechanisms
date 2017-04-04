@@ -17,12 +17,14 @@
             True(!result, expression);
         }
 
-        public static void NotNull(object value, string variable)
+        public static void NotNull([NotNull] object value, string variable)
         {
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
             True(value != null, variable + " should not be null");
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
         }
 
-        public static void NotEmpty(string value, string variable)
+        public static void NotEmpty([NotNull] string value, string variable)
         {
             False(string.IsNullOrEmpty(value), variable + " should not be null or empty");
         }

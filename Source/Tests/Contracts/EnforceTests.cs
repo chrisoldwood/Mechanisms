@@ -3,6 +3,7 @@ using Mechanisms.Tests;
 
 // Deliberating testing null references.
 // ReSharper disable ExpressionIsAlwaysNull
+// ReSharper disable AssignNullToNotNullAttribute
 
 namespace Tests.Contracts
 {

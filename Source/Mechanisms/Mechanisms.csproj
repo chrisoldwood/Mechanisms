@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\Annotations.cs" />
     <Compile Include="Contracts\ContractViolationException.cs" />
     <Compile Include="Contracts\Enforce.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
