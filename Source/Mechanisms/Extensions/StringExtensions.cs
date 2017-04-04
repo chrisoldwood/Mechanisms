@@ -6,5 +6,10 @@
         {
             return value.Length == 0;
         }
+
+        public static string Fmt(this string format, params object[] args)
+        {
+            return string.Format(format, args);
+        }
     }
 }

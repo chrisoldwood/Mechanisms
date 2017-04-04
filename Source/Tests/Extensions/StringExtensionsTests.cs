@@ -29,5 +29,16 @@ namespace Tests.Extensions
                 Assert.Throws(() => nullReference.IsEmpty());
             });
         }
+
+        [TestCases]
+        public static void formatting()
+        {
+            Suite.Add("a string value can be used as a format string", () =>
+            {
+                var output = "{0}".Fmt("value");
+
+                Assert.True(output == "value");
+            });
+        }
     }
 }
