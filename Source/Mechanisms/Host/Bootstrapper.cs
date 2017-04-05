@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Mechanisms.Extensions;
 
 namespace Mechanisms.Host
 {
@@ -20,7 +21,7 @@ namespace Mechanisms.Host
             }
             catch (Exception e)
             {
-                stderr.WriteLine(e.Message);
+                stderr.WriteLine(e.FormatMessage());
                 return ExitCode.Failure;
             }
         }

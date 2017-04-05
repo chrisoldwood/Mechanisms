@@ -61,6 +61,24 @@ namespace Tests.Host
 
                 Assert.True(stderr.ToString().Contains(message));
             });
+
+            "The entire uncaught exception chain is written to stderr".Is(() =>
+            {
+                const string innerMessage = "inner exception";
+                const string outerMessage = "outer exception";
+
+                MainFunc main = (args) =>
+                {
+                    throw new Exception(outerMessage, new Exception(innerMessage));
+                };
+
+                TextWriter stderr = new StringWriter();
+
+                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr);
+
+                Assert.True(stderr.ToString().Contains(outerMessage));
+                Assert.True(stderr.ToString().Contains(innerMessage));
+            });
         }
 
         private static readonly string[] AnyArgs = new string[0];

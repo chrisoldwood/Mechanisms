@@ -49,6 +49,7 @@
     <Compile Include="Contracts\ContractViolationException.cs" />
     <Compile Include="Contracts\Expect.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Host\Bootstrapper.cs" />
     <Compile Include="Host\ExitCode.cs" />
