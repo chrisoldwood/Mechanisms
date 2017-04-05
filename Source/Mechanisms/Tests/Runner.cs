@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Mechanisms.Contracts;
+using Mechanisms.Host;
 
 namespace Mechanisms.Tests
 {
@@ -70,7 +71,7 @@ namespace Mechanisms.Tests
             DebugWriter.WriteLine(summary);
             Console.WriteLine(summary);
 
-            return (failures == 0) ? 0 : 1;
+            return (failures == 0) ? ExitCode.Success : ExitCode.Failure;
         }
 
         private static void RegisterTestCases(Assembly testsAssembly)

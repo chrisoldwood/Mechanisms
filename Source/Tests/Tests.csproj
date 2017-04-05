@@ -48,6 +48,7 @@
     <Compile Include="Contracts\EnforceTests.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionsTests.cs" />
+    <Compile Include="Host\BootstrapperTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
