@@ -1,6 +1,6 @@
 ﻿namespace Mechanisms.Contracts
 {
-    public static class Enforce
+    public static class Expect
     {
         public static void True(bool result, string expression)
         {

@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Contracts\Annotations.cs" />
     <Compile Include="Contracts\ContractViolationException.cs" />
-    <Compile Include="Contracts\Enforce.cs" />
+    <Compile Include="Contracts\Expect.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Host\Bootstrapper.cs" />

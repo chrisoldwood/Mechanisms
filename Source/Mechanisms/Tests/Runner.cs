@@ -84,11 +84,11 @@ namespace Mechanisms.Tests
 
                 foreach (var member in members)
                 {
-                    Enforce.True(member is MethodInfo, "member is MethodInfo");
+                    Expect.True(member is MethodInfo, "member is MethodInfo");
 
                     Attribute[] attributes = Attribute.GetCustomAttributes(member, typeof(TestCasesAttribute));
 
-                    Enforce.True(attributes.Length == 1, "attributes.Length == 1");
+                    Expect.True(attributes.Length == 1, "attributes.Length == 1");
 
                     ((MethodInfo)member).Invoke(null, new object[0]);
                 }
