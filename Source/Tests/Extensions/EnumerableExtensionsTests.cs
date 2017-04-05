@@ -10,7 +10,7 @@ namespace Tests.Extensions
         [TestCases]
         public static void conversions()
         {
-            Suite.Add("A sequence can be converted to a hash set", () =>
+            "A sequence can be converted to a hash set".Is(() =>
             {
                 var seq = new int[] {1, 2, 3};
 

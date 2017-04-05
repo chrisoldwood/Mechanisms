@@ -16,7 +16,7 @@ namespace Tests.Host
         [TestCases]
         public static void exit_codes()
         {
-            Suite.Add("By default the boostrapper passes through the exit code from main()", () =>
+            "By default the boostrapper passes through the exit code from main()".Is(() =>
             {
                 const int mainExitCode = 99;
 
@@ -30,7 +30,7 @@ namespace Tests.Host
                 Assert.True(exitCode == mainExitCode);
             });
 
-            Suite.Add("The boostrapper returns a non-zero value when an exception is not caught", () =>
+            "The boostrapper returns a non-zero value when an exception is not caught".Is(() =>
             {
                 MainFunc main = (args) =>
                 {
@@ -46,7 +46,7 @@ namespace Tests.Host
         [TestCases]
         public static void error_reporting()
         {
-            Suite.Add("The message for an uncaught exception is written to stderr", () =>
+            "The message for an uncaught exception is written to stderr".Is(() =>
             {
                 const string message = "an exception message";
 

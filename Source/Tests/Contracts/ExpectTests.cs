@@ -12,7 +12,7 @@ namespace Tests.Contracts
         [TestCases]
         public static void true_validation()
         {
-            Suite.Add("Expecting a true expression is benign when the result is true", () =>
+            "Expecting a true expression is benign when the result is true".Is(() =>
             { 
                 const bool trueExpression = true;
 
@@ -21,7 +21,7 @@ namespace Tests.Contracts
                 Assert.Pass();
             });
 
-            Suite.Add("Expecting a true expression throws when the result is false", () =>
+            "Expecting a true expression throws when the result is false".Is(() =>
             { 
                 const bool falseExpression = false;
 
@@ -32,7 +32,7 @@ namespace Tests.Contracts
         [TestCases]
         public static void false_validation()
         {
-            Suite.Add("Expecting a false expression is benign when the result is false", () =>
+            "Expecting a false expression is benign when the result is false".Is(() =>
             { 
                 const bool falseExpression = false;
 
@@ -41,7 +41,7 @@ namespace Tests.Contracts
                 Assert.Pass();
             });
 
-            Suite.Add("Expecting a false expression throws when the result is true", () =>
+            "Expecting a false expression throws when the result is true".Is(() =>
             { 
                 const bool trueExpression = true;
 
@@ -52,7 +52,7 @@ namespace Tests.Contracts
         [TestCases]
         public static void null_validation()
         {
-            Suite.Add("Expecting a non-null reference is benign when the reference is not null", () =>
+            "Expecting a non-null reference is benign when the reference is not null".Is(() =>
             { 
                 var @object = new object();
 
@@ -61,7 +61,7 @@ namespace Tests.Contracts
                 Assert.Pass();
             });
 
-            Suite.Add("Expecting a non-null reference throws when the reference is null", () =>
+            "Expecting a non-null reference throws when the reference is null".Is(() =>
             { 
                 object nullReference = null;
 
@@ -72,7 +72,7 @@ namespace Tests.Contracts
         [TestCases]
         public static void string_validation()
         {
-            Suite.Add("Expecting a non-empty string is benign when the string contains data", () =>
+            "Expecting a non-empty string is benign when the string contains data".Is(() =>
             { 
                 const string nonEmptyString = "a string value";
 
@@ -81,14 +81,14 @@ namespace Tests.Contracts
                 Assert.Pass();
             });
 
-            Suite.Add("Expecting a non-empty string throws when the string is null", () =>
+            "Expecting a non-empty string throws when the string is null".Is(() =>
             { 
                 string nullReference = null;
 
                 Assert.Throws(() => Expect.NotEmpty(nullReference, "nullReference"));
             });
 
-            Suite.Add("Expecting a non-empty string throws when the non-null string contains no data", () =>
+            "Expecting a non-empty string throws when the non-null string contains no data".Is(() =>
             { 
                 const string emptyString = "";
 

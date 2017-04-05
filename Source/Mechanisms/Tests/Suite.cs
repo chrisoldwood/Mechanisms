@@ -45,4 +45,12 @@ namespace Mechanisms.Tests
 
         private static readonly List<TestCase> Tests = new List<TestCase>();
     }
+
+    public static class StringExtensions
+    {
+        public static void Is(this string name, Action function)
+        {
+            Suite.Add(name, function);
+        }
+    }
 }
