@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Mechanisms.Contracts;
+using Mechanisms.Extensions;
 using Mechanisms.Host;
 
 namespace Mechanisms.Tests
@@ -29,7 +31,7 @@ namespace Mechanisms.Tests
                 }
                 catch (Exception)
                 {
-                    test.RecordAssert(false);
+                    test.RecordFailure(null);
                 }
 
                 if (test.Failures != 0)
@@ -57,7 +59,9 @@ namespace Mechanisms.Tests
                 foreach (var test in nonSuccesses)
                 {
                     var outcome = (test.Failures != 0) ? "FAILED " : "UNKNOWN";
-                    var message = outcome + ": " + test.Name;
+                    var caller = (test.FirstFailure != null) ? FormatStackFrame(test.FirstFailure) : "";
+                    var message = outcome + ": " + test.Name + " " + caller;
+                    
 
                     DebugWriter.WriteLine(message);
                     Console.WriteLine(message);
@@ -93,6 +97,13 @@ namespace Mechanisms.Tests
                     ((MethodInfo)member).Invoke(null, new object[0]);
                 }
             }
+        }
+
+        private static string FormatStackFrame(StackFrame stackFrame)
+        {
+            var filename = Path.GetFileName(stackFrame.GetFileName());
+
+            return "[{0}, {1}]".Fmt(filename, stackFrame.GetFileLineNumber());
         }
 
         private static readonly DefaultTraceListener DebugWriter = new DefaultTraceListener();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Mechanisms.Tests
 {
@@ -23,6 +24,8 @@ namespace Mechanisms.Tests
             public int Successes { get; private set; }
             public int Failures { get; private set; }
 
+            public StackFrame FirstFailure { get; private set; }
+
             public TestCase(string name, Action function)
             {
                 Name = name;
@@ -34,12 +37,12 @@ namespace Mechanisms.Tests
                 ++Successes;
             }
 
-            public void RecordAssert(bool succeeded)
+            public void RecordFailure(StackFrame caller)
             {
-                if (succeeded)
-                    ++Successes;
-                else
-                    ++Failures;
+                ++Failures;
+
+                if ((FirstFailure == null) && (caller != null))
+                    FirstFailure = caller;
             }
         }
 

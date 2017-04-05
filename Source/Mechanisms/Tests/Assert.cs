@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Mechanisms.Tests
 {
@@ -9,26 +11,47 @@ namespace Mechanisms.Tests
             _currentTest.RecordPass();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void True(bool result)
         {
-            _currentTest.RecordAssert(result);
+            if (result)
+            {
+                _currentTest.RecordPass();
+            }
+            else
+            {
+                var caller = new StackFrame(1, true);
+                _currentTest.RecordFailure(caller);
+            }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void False(bool result)
         {
-            _currentTest.RecordAssert(!result);
+            if (!result)
+            {
+                _currentTest.RecordPass();
+            }
+            else
+            {
+                var caller = new StackFrame(1, true);
+                _currentTest.RecordFailure(caller);
+            }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void Throws(Action statement)
         {
             try
             {
                 statement();
-                _currentTest.RecordAssert(false);
+
+                var caller = new StackFrame(1, true);
+                _currentTest.RecordFailure(caller);
             }
             catch (Exception)
             {
-                _currentTest.RecordAssert(true);
+                _currentTest.RecordPass();
             }
         }
 
