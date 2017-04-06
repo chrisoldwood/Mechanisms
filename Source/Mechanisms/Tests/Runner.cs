@@ -29,7 +29,9 @@ namespace Mechanisms.Tests
                 {
                     test.Function();
                 }
-                catch (Exception)
+                #pragma warning disable 168
+                catch (Exception e)
+                #pragma warning restore 168
                 {
                     test.RecordFailure(null);
                 }

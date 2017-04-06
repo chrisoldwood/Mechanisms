@@ -58,6 +58,7 @@
     <Compile Include="Tests\Runner.cs" />
     <Compile Include="Tests\Suite.cs" />
     <Compile Include="Tests\TestCasesAttribute.cs" />
+    <Compile Include="Types\Optional.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
