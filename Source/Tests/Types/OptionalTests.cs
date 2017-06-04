@@ -1,4 +1,5 @@
-﻿using Mechanisms.Tests;
+﻿using System;
+using Mechanisms.Tests;
 using Mechanisms.Types;
 
 // Explictly testing null reference scenarios.
@@ -187,6 +188,57 @@ namespace Tests.Types
                 Assert.Throws(() => { var x = none.Value; });
 
                 #pragma warning restore 168
+            });
+
+            "the real value instead of the default can be retrieved when it exists".Is(() =>
+            {
+                const string value = "a value";
+                const string @default = "the default";
+
+                var optional = value.ToOptional();
+
+                Assert.True(optional.ValueOrElse(@default) == value);
+            });
+
+            "the default value is returned when no value exists".Is(() =>
+            {
+                const string @default = "the default";
+
+                var optional = Optional<string>.None;
+
+                Assert.True(optional.ValueOrElse(@default) == @default);
+            });
+
+            "the real value is returned instead of invoking the default when it exists".Is(() =>
+            {
+                const string value = "a value";
+
+                var defaultInvoked = false;
+                Func<string> @default = () =>
+                {
+                    defaultInvoked = true;
+                    return "the default";
+                };
+
+                var optional = value.ToOptional();
+
+                Assert.True(optional.ValueOrElse(@default) == value);
+                Assert.False(defaultInvoked);
+            });
+
+            "the default value is returned when no value exists".Is(() =>
+            {
+                var defaultInvoked = false;
+                Func<string> @default = () =>
+                {
+                    defaultInvoked = true;
+                    return "the default";
+                };
+
+                var optional = Optional<string>.None;
+
+                Assert.True(optional.ValueOrElse(@default) == "the default");
+                Assert.True(defaultInvoked);
             });
         }
 

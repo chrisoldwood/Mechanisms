@@ -2,6 +2,7 @@
 // Using "this" as a synonym for "lhs".
 // ReSharper disable RedundantThisQualifier
 
+using System;
 using Mechanisms.Contracts;
 
 namespace Mechanisms.Types
@@ -26,6 +27,16 @@ namespace Mechanisms.Types
         public Optional(T value)
         {
             _value = value;
+        }
+
+        public T ValueOrElse(T @default)
+        {
+            return (HasValue) ? Value : @default;
+        }
+
+        public T ValueOrElse(Func<T> @default)
+        {
+            return (HasValue) ? Value : @default();
         }
 
         public override bool Equals(object rhs)
