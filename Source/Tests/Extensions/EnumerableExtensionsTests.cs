@@ -3,6 +3,9 @@ using System.Linq;
 using Mechanisms.Extensions;
 using Mechanisms.Tests;
 
+// Want to keep mre verbose closures for readability.  
+// ReSharper disable ConvertClosureToMethodGroup
+
 namespace Tests.Extensions
 {
     public static class EnumerableExtensionsTests

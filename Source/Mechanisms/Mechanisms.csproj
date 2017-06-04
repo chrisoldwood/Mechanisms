@@ -48,6 +48,7 @@
     <Compile Include="Contracts\Annotations.cs" />
     <Compile Include="Contracts\ContractViolationException.cs" />
     <Compile Include="Contracts\Expect.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\ExpectTests.cs" />
+    <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTests.cs" />
     <Compile Include="Extensions\ExceptionExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionsTests.cs" />
