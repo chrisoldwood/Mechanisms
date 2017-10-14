@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Mechanisms.Contracts;
 using Mechanisms.Extensions;
 using Mechanisms.Host;
 
@@ -14,7 +13,9 @@ namespace Mechanisms.Tests
     {
         public static int Run(Assembly testsAssembly)
         {
-            RegisterTestCases(testsAssembly);
+            var warnings = new List<string>();
+
+            RegisterTestCases(testsAssembly, warnings);
 
             var successes = 0;
             var failures = 0;
@@ -72,6 +73,12 @@ namespace Mechanisms.Tests
                 Console.Write("\n");
             }
 
+            foreach (var warning in warnings)
+            {
+                DebugWriter.WriteLine(warning);
+                Console.WriteLine(warning);
+            }
+
             var summary = String.Format("Test Results: {0} Passed {1} Failed {2} Unknown",
                                         successes, failures, unknown);
             DebugWriter.WriteLine(summary);
@@ -80,23 +87,33 @@ namespace Mechanisms.Tests
             return (failures == 0) ? ExitCode.Success : ExitCode.Failure;
         }
 
-        private static void RegisterTestCases(Assembly testsAssembly)
+        private static void RegisterTestCases(Assembly testsAssembly, IList<string> warnings)
         {
-            Type[] types = testsAssembly.GetTypes();
+            var types = testsAssembly.GetTypes();
 
             foreach (var type in types)
             {
-                MemberInfo[] members = type.GetMembers(BindingFlags.Static|BindingFlags.Public);
+                var methods = type.GetMethods();
 
-                foreach (var member in members)
+                foreach (var method in methods)
                 {
-                    Expect.True(member is MethodInfo, "member is MethodInfo");
+                    var attributes = Attribute.GetCustomAttributes(method, typeof(TestCasesAttribute));
 
-                    Attribute[] attributes = Attribute.GetCustomAttributes(member, typeof(TestCasesAttribute));
-
-                    Expect.True(attributes.Length == 1, "attributes.Length == 1");
-
-                    ((MethodInfo)member).Invoke(null, new object[0]);
+                    if (attributes.Length == 1)
+                    {
+                        if (method.IsStatic)
+                        {
+                            method.Invoke(null, new object[0]);
+                        }
+                        else
+                        {
+                            // ReSharper disable PossibleNullReferenceException
+                            var name = method.DeclaringType.Name + "." + method.Name;
+                            var warning = String.Format("WARNING: [TestCases] method '{0}' is not declared static.", name);
+                            warnings.Add(warning);
+                            // ReSharper restore PossibleNullReferenceException
+                        }
+                    }
                 }
             }
         }

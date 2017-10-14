@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Mechanisms.Host;
 using Mechanisms.Tests;
@@ -25,7 +26,7 @@ namespace Tests.Host
                     return mainExitCode;
                 };
 
-                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, AnyStdErr);
+                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
 
                 Assert.True(exitCode == mainExitCode);
             });
@@ -37,7 +38,7 @@ namespace Tests.Host
                     throw new Exception("any exception");
                 };
 
-                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, AnyStdErr);
+                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
 
                 Assert.True(exitCode != 0);
             });
@@ -57,7 +58,7 @@ namespace Tests.Host
 
                 TextWriter stderr = new StringWriter();
 
-                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr);
+                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr, AnyDebugWriter);
 
                 Assert.True(stderr.ToString().Contains(message));
             });
@@ -74,7 +75,7 @@ namespace Tests.Host
 
                 TextWriter stderr = new StringWriter();
 
-                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr);
+                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr, AnyDebugWriter);
 
                 Assert.True(stderr.ToString().Contains(outerMessage));
                 Assert.True(stderr.ToString().Contains(innerMessage));
@@ -85,5 +86,15 @@ namespace Tests.Host
         private static readonly TextReader AnyStdIn = new StringReader("");
         private static readonly TextWriter AnyStdOut = new StringWriter();
         private static readonly TextWriter AnyStdErr = new StringWriter();
+        private static readonly TraceListener AnyDebugWriter = new NullTraceListener();
+
+        private class NullTraceListener : TraceListener
+        {
+            public override void Write(string message)
+            { }
+
+            public override void WriteLine(string message)
+            { }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Mechanisms.Extensions;
 
@@ -10,10 +11,14 @@ namespace Mechanisms.Host
     {
         public static int Run(MainFunc main, string[] args)
         {
-            return Run(main, args, Console.In, Console.Out, Console.Error);
+            var debugWriter = new DefaultTraceListener();
+
+            return Run(main, args, Console.In, Console.Out, Console.Error, debugWriter);
         }
 
-        public static int Run(MainFunc main, string[] args, TextReader stdin, TextWriter stdout, TextWriter stderr)
+        public static int Run(MainFunc main, string[] args,
+                              TextReader stdin, TextWriter stdout, TextWriter stderr,
+                              TraceListener debugWriter)
         {
             try
             {
@@ -21,7 +26,9 @@ namespace Mechanisms.Host
             }
             catch (Exception e)
             {
-                stderr.WriteLine(e.FormatMessage());
+                var message = e.FormatMessage();
+                debugWriter.WriteLine(message);
+                stderr.WriteLine(message);
                 return ExitCode.Failure;
             }
         }

@@ -52,8 +52,12 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Host\Arguments.cs" />
     <Compile Include="Host\Bootstrapper.cs" />
+    <Compile Include="Host\CommandLineParser.cs" />
     <Compile Include="Host\ExitCode.cs" />
+    <Compile Include="Host\InvalidSwitchException.cs" />
+    <Compile Include="Host\Switch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Assert.cs" />
     <Compile Include="Tests\Runner.cs" />

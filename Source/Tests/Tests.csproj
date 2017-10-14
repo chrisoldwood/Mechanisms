@@ -51,6 +51,7 @@
     <Compile Include="Extensions\ExceptionExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionsTests.cs" />
     <Compile Include="Host\BootstrapperTests.cs" />
+    <Compile Include="Host\CommandLineParserTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Types\OptionalTests.cs" />
