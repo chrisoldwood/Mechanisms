@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Mechanisms.Contracts;
 
 namespace Mechanisms.Host
 {
@@ -19,6 +20,14 @@ namespace Mechanisms.Host
         public bool IsSet(int id)
         {
             return Named.ContainsKey(id);
+        }
+
+        public string Value(int id)
+        {
+            Expect.True(IsSet(id), "IsSet(id)");
+            Expect.True(Named[id].Count == 1, "Named[id].Count == 1");
+
+            return Named[id][0];
         }
     }
 }

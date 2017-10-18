@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Mechanisms.Extensions;
-
-// ReSharper disable PossibleMultipleEnumeration
 
 namespace Mechanisms.Host
 {
@@ -14,24 +11,41 @@ namespace Mechanisms.Host
     {
         public static Arguments Parse(IEnumerable<string> arguments, IEnumerable<Switch> switches)
         {
-            ValidateSwitches(switches);
+            var argList = arguments.ToArray();
+            var switchList = switches.ToArray();
+
+            ValidateSwitches(switchList);
 
             var named = new Dictionary<int, ArgumentList>();
             var unnamed = new List<string>();
-
-            foreach (var argument in arguments)
+            for (var i = 0; i != argList.Length; ++i)
             {
-                if (argument.StartsWith("--"))
+                var argument = argList[i];
+                var values = new List<string>();
+
+                if (argument.StartsWith("-") || argument.StartsWith("/"))
                 {
-                    var name = argument.Substring(2);
-                    var @switch = switches.Single(s => s.LongName == name);
-                    named.Add(@switch.Id, new List<string>());
-                }
-                else if (argument.StartsWith("-") || argument.StartsWith("/"))
-                {
-                    var name = argument.Substring(1);
-                    var @switch = switches.Single(s => s.ShortName == name);
-                    named.Add(@switch.Id, new List<string>());
+                    var longName = argument.StartsWith("--");
+                    var prefixLen = longName ? 2 : 1;
+                    var valuePos = argument.IndexOfAny(new[]{ ':', '=' });
+                    var name = (valuePos == -1) ? argument.Substring(prefixLen)
+                                                : argument.Substring(prefixLen, valuePos - prefixLen);
+
+                    var @switch = longName ? switchList.Single(s => s.LongName == name)
+                                           : switchList.Single(s => s.ShortName == name);
+
+                    if ((@switch.Type == Switch.ValueType.Boolean) && (valuePos != -1))
+                    {
+                        throw new CmdLineException("The switch '{0}' does not expect a value".Fmt(name));
+                    }
+                    else if (@switch.Type == Switch.ValueType.Value)
+                    {
+                        var value = (valuePos == -1) ? argList[++i]
+                                                     : argument.Substring(valuePos+1);
+                        values.Add(value);
+                    }
+
+                    named.Add(@switch.Id, values);
                 }
                 else
                 {

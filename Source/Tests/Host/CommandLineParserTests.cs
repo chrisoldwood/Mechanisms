@@ -2,8 +2,6 @@
 using Mechanisms.Host;
 using Mechanisms.Tests;
 
-// ReSharper disable RedundantCommaInArrayInitializer
-
 namespace Tests.Host
 {
     public static class CommandLineParserTests
@@ -78,7 +76,7 @@ namespace Tests.Host
         }
 
         [TestCases]
-        public static void parsing()
+        public static void basic_parsing()
         {
             "an empty list contains no arguments".Is(() =>
             {
@@ -139,6 +137,136 @@ namespace Tests.Host
             });
         }
 
+        [TestCases]
+        public static void boolean_value_parsing()
+        {
+            "a boolean switch requires no value".Is(() =>
+            {
+                var args = new[] { "--version" };
+
+                var switches = new[] { VersionSwitch };
+                var result = CommandLineParser.Parse(args, switches);
+
+                Assert.True(result.IsSet(Version));
+            });
+
+            "specifying a value for a boolean switch generates an error".Is(() =>
+            {
+                var switches = new[] { VersionSwitch };
+                var args = new[] { "--version:value" };
+
+                Assert.Throws(() => CommandLineParser.Parse(args, switches));
+            });
+        }
+
+        [TestCases]
+        public static void single_value_parsing()
+        {
+            "the value for a single value switch can be specfied with the subsequent argument".Is(() =>
+            {
+                var switches = new[] { LoginSwitch };
+                var scenarios = new[] 
+                {
+                    new[] { "-l", "value" },
+                    new[] { "/l", "value" },
+                    new[] { "--login", "value" },
+                };
+
+                foreach (var args in scenarios)
+                {
+                    var result = CommandLineParser.Parse(args, switches);
+
+                    Assert.True(result.IsSet(Login));
+                    Assert.True(result.Value(Login) == "value");
+                }
+            });
+
+            "if the value for a single value switch is missing it generates an error".Is(() =>
+            {
+                var switches = new[] { LoginSwitch, VersionSwitch };
+                var scenarios = new[] 
+                {
+                    new[] { "-l", },
+                    new[] { "/l", },
+                    new[] { "--login", },
+                };
+
+                foreach (var args in scenarios)
+                {
+                    Assert.Throws(() => CommandLineParser.Parse(args, switches));
+                }
+            });
+
+            "the value for a single value switch can be specfied inline after a : or =".Is(() =>
+            {
+                var switches = new[] { LoginSwitch };
+                var scenarios = new[] 
+                {
+                    new[] { "-l:value" },
+                    new[] { "/l:value" },
+                    new[] { "--login:value" },
+                    new[] { "-l=value" },
+                    new[] { "/l=value" },
+                    new[] { "--login=value" },
+                };
+
+                foreach (var args in scenarios)
+                {
+                    var result = CommandLineParser.Parse(args, switches);
+
+                    Assert.True(result.IsSet(Login));
+                    Assert.True(result.Value(Login) == "value");
+                }
+            });
+        
+            "the value for a single value switch can be empty".Is(() =>
+            {
+                var switches = new[] { LoginSwitch };
+                var args = new[] { "--login:" };
+
+                var result = CommandLineParser.Parse(args, switches);
+
+                Assert.True(result.IsSet(Login));
+                Assert.True(result.Value(Login) == "");
+            });
+        }
+
+        [TestCases]
+        public static void multiple_switch_parsing()
+        {
+            "multiple switches can be passed in any order using any style".Is(() =>
+            {
+                var switches = new[] { VersionSwitch, LoginSwitch };
+                var scenarios = new[] 
+                {
+                    new[] { "--login", "value", "--version" },
+                    new[] { "--version", "--login", "value" },
+                    new[] { "-l:value", "--version" },
+                    new[] { "--login", "value", "/v" },
+                };
+
+                foreach (var args in scenarios)
+                {
+                    var result = CommandLineParser.Parse(args, switches);
+
+                    Assert.True(result.IsSet(Version));
+                    Assert.True(result.IsSet(Login));
+                    Assert.True(result.Value(Login) == "value");
+                }
+            });
+
+            "a switch will be interpreated as a value rather than a missing value being detected".Is(() =>
+            {
+                var switches = new[] { LoginSwitch, VersionSwitch };
+                var args = new[] { "--login", "--version" };
+
+                var result = CommandLineParser.Parse(args, switches);
+
+                Assert.True(result.IsSet(Login));
+                Assert.False(result.IsSet(Version));
+                Assert.True(result.Value(Login) == "--version");
+            });
+        }
 
         [TestCases]
         public static void results_querying()
@@ -178,8 +306,10 @@ namespace Tests.Host
         }
 
         private const int Version = 1;
+        private const int Login = 2;
 
         private static readonly Switch VersionSwitch = new Switch(Version, "v", "version");
+        private static readonly Switch LoginSwitch = new Switch(Login, "l", "login", Switch.ValueType.Value);
         private static readonly string[] EmptyArgList = new string[0];
     }
 }
