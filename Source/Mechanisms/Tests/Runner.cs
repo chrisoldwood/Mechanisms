@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Mechanisms.Extensions;
 using Mechanisms.Host;
+using Switch = Mechanisms.Host.Switch;
 
 namespace Mechanisms.Tests
 {
@@ -13,6 +14,30 @@ namespace Mechanisms.Tests
     {
         public static int Run(Assembly testsAssembly)
         {
+            return Run(testsAssembly, Enumerable.Empty<string>());
+        }
+
+        public static int Run(Assembly testsAssembly, IEnumerable<string> args)
+        {
+            const int helpSwitch = 1;
+            const int verboseSwitch = 2;
+
+            var switches = new[]
+            {
+                new Switch(helpSwitch, "h", "help"),
+                new Switch(verboseSwitch, "v", "verbose"),
+            };
+
+            var arguments = CommandLineParser.Parse(args, switches);
+
+            if (arguments.IsSet(helpSwitch))
+            {
+                var runner = Path.GetFileName(testsAssembly.Location);
+                Console.WriteLine("USAGE: {0} [options...]", runner);
+                return ExitCode.Success;
+            }
+
+            var verbose = arguments.IsSet(verboseSwitch);
             var warnings = new List<string>();
 
             RegisterTestCases(testsAssembly, warnings);
@@ -24,6 +49,9 @@ namespace Mechanisms.Tests
 
             foreach (var test in Suite.TestCases)
             {
+                if (verbose)
+                    Console.WriteLine(test.Name);
+
                 Assert.OnTestCaseStart(test);
 
                 try
@@ -39,23 +67,26 @@ namespace Mechanisms.Tests
 
                 if (test.Failures != 0)
                 {
-                    Console.Write("F");
+                    if (!verbose) 
+                        Console.Write("F");
                     ++failures;
                     nonSuccesses.Add(test);
                 }
                 else if (test.Successes == 0)
                 {
-                    Console.Write("U");
+                    if (!verbose) 
+                        Console.Write("U");
                     ++unknown;
                     nonSuccesses.Add(test);
                 }
                 else
                 {
-                    Console.Write(".");
+                    if (!verbose) 
+                        Console.Write(".");
                     ++successes;
                 }                
             }
-            Console.Write("\n\n");
+            Console.Write(verbose ? "\n" : "\n\n");
 
             if (nonSuccesses.Any())
             {

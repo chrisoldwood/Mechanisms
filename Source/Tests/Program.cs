@@ -14,7 +14,7 @@ namespace Tests
 
         static int AppMain(string[] args)
         {
-            return Runner.Run(Assembly.GetExecutingAssembly());
+            return Runner.Run(Assembly.GetExecutingAssembly(), args);
         }
     }
 }
