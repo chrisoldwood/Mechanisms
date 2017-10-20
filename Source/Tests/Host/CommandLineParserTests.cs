@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Mechanisms.Host;
 using Mechanisms.Tests;
 
@@ -305,11 +306,63 @@ namespace Tests.Host
             });
         }
 
+        [TestCases]
+        public static void usage_formatting()
+        {
+            "a switch with only a short name is the name followed by its description".Is(() =>
+            {
+                var switches = new[] { new Switch(AnyId, "s", Switch.NoLongName, "Description"), };
+
+                var usage = CommandLineParser.FormatSwitches(switches);
+
+                Assert.True(usage.Single() == "-s  Description");
+            });
+
+            "a switch with only a long name is the name followed by its description".Is(() =>
+            {
+                var switches = new[] { new Switch(AnyId, Switch.NoShortName, "switch", "Description"), };
+
+                var usage = CommandLineParser.FormatSwitches(switches);
+
+                Assert.True(usage.Single() == "--switch  Description");
+            });
+
+            "a switch with both a short and long name is both names followed by its description".Is(() =>
+            {
+                var switches = new[] { new Switch(AnyId, "s", "switch", "Description"), };
+
+                var usage = CommandLineParser.FormatSwitches(switches);
+
+                Assert.True(usage.Single() == "-s | --switch  Description");
+            });
+
+            "multiple switches should be vertically aligned".Is(() =>
+            {
+                var switches = new[]
+                {
+                    new Switch(1, "f", "first", "First switch"),
+                    new Switch(2, "2nd", "second", "Second switch"),
+                    new Switch(3, Switch.NoShortName, "third", "Third switch"),
+                    new Switch(4, "4", Switch.NoLongName, "Fourth switch"),
+                };
+
+                var usage = CommandLineParser.FormatSwitches(switches)
+                                             .ToArray();
+
+                Assert.True(usage.Length == switches.Length);
+                Assert.True(usage[0] == "-f   | --first   First switch");
+                Assert.True(usage[1] == "-2nd | --second  Second switch");
+                Assert.True(usage[2] == "       --third   Third switch");
+                Assert.True(usage[3] == "-4               Fourth switch");
+            });
+        }
+
+        private const int AnyId = 0;
         private const int Version = 1;
         private const int Login = 2;
 
-        private static readonly Switch VersionSwitch = new Switch(Version, "v", "version");
-        private static readonly Switch LoginSwitch = new Switch(Login, "l", "login", Switch.ValueType.Value);
+        private static readonly Switch VersionSwitch = new Switch(Version, "v", "version", "Show version");
+        private static readonly Switch LoginSwitch = new Switch(Login, "l", "login", Switch.ValueType.Value, "Login name");
         private static readonly string[] EmptyArgList = new string[0];
     }
 }

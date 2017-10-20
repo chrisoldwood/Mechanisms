@@ -24,16 +24,21 @@ namespace Mechanisms.Tests
 
             var switches = new[]
             {
-                new Switch(helpSwitch, "h", "help"),
-                new Switch(verboseSwitch, "v", "verbose"),
+                new Switch(helpSwitch, "h", "help", "Display the program usage"),
+                new Switch(verboseSwitch, "v", "verbose", "Enable verbose test output"),
             };
 
             var arguments = CommandLineParser.Parse(args, switches);
 
             if (arguments.IsSet(helpSwitch))
             {
-                var runner = Path.GetFileName(testsAssembly.Location);
+                var runner = Path.GetFileNameWithoutExtension(testsAssembly.Location);
+                Console.WriteLine();
                 Console.WriteLine("USAGE: {0} [options...]", runner);
+                Console.WriteLine();
+                foreach (var line in CommandLineParser.FormatSwitches(switches))
+                    Console.WriteLine(line);
+
                 return ExitCode.Success;
             }
 

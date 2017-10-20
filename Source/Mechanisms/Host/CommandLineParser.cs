@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Mechanisms.Contracts;
 using Mechanisms.Extensions;
 
 namespace Mechanisms.Host
@@ -54,6 +56,69 @@ namespace Mechanisms.Host
             }
 
             return new Arguments(named, unnamed);
+        }
+
+        public static IEnumerable<string> FormatSwitches(IEnumerable<Switch> switches)
+        {
+            var switchList = switches.ToArray();
+
+            int maxShortNameLen = 0;
+            int maxLongNameLen = 0;
+
+            foreach (var @switch in switchList)
+            {
+                if (@switch.ShortName.HasValue)
+                    maxShortNameLen = Math.Max(maxShortNameLen, @switch.ShortName.Value.Length);
+
+                if (@switch.LongName.HasValue)
+                    maxLongNameLen = Math.Max(maxLongNameLen, @switch.LongName.Value.Length);
+            }
+
+            var usage = new List<string>();
+
+            foreach (var @switch in switchList)
+            {
+                var shortName = @switch.ShortName.HasValue ? "-" + @switch.ShortName.Value : "";
+                var longName = @switch.LongName.HasValue ? "--" + @switch.LongName.Value : "";
+                var description = @switch.Description;
+                var line = "";
+
+                if (@switch.ShortName.HasValue && @switch.LongName.HasValue)
+                {
+                    var lftPadLen = maxShortNameLen - @switch.ShortName.Value.Length; 
+                    var lftPadding = new string(' ', lftPadLen);
+                    var rgtPadLen = maxLongNameLen - @switch.LongName.Value.Length; 
+                    var rgtPadding = new string(' ', rgtPadLen);
+
+                    line = "{0}{1} | {2}{3}  {4}".Fmt(shortName, lftPadding, longName, rgtPadding, description);
+                }
+                else if (@switch.ShortName.HasValue)
+                {
+                    var lftPadLen = maxShortNameLen - @switch.ShortName.Value.Length; 
+                    var lftPadding = new string(' ', lftPadLen);
+                    var rgtPadLen = maxLongNameLen != 0 ? (3 + 2 + maxLongNameLen) : 0; 
+                    var rgtPadding = new string(' ', rgtPadLen);
+
+                    line = "{0}{1}{2}  {3}".Fmt(shortName, lftPadding, rgtPadding, description);
+                }
+                else if (@switch.LongName.HasValue)
+                {
+                    var lftPadLen = maxShortNameLen != 0 ? (1 + maxShortNameLen + 3) : 0; 
+                    var lftPadding = new string(' ', lftPadLen);
+                    var rgtPadLen = maxLongNameLen - @switch.LongName.Value.Length; 
+                    var rgtPadding = new string(' ', rgtPadLen);
+
+                    line = "{0}{1}{2}  {3}".Fmt(lftPadding, longName, rgtPadding, description);
+                }
+                else
+                {
+                    throw new ContractViolationException("No short or long name defined");
+                }
+
+                usage.Add(line);
+            }
+
+            return usage;
         }
 
         private static void ValidateSwitches(IEnumerable<Switch> switches)

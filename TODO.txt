@@ -2,8 +2,6 @@
 
 - Report better messages for command line parsing errors.
 
-- Add command line parser method for building the usage message switch list.
-
 - Support verbs with different argument lists.
 
 - Better assert handling for exceptions in tests, e.g. at least type, but also the message.
