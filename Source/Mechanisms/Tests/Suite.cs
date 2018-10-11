@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Mechanisms.Contracts;
 
 namespace Mechanisms.Tests
 {
-    public static class Suite
+    internal static class Suite
     {
-        public static void Add(string name, Action function)
-        {
-            Tests.Add(new TestCase(name, function));
-        }
-        
-        internal static IEnumerable<TestCase> TestCases
+        public static IEnumerable<TestCase> TestCases
         {
             get { return Tests; }
         }
 
         internal class TestCase
         {
+            public string Type { get; private set;  }
             public string Name { get; private set;  }
             public Action Function { get; private set;  }
 
@@ -26,8 +23,9 @@ namespace Mechanisms.Tests
 
             public StackFrame FirstFailure { get; private set; }
 
-            public TestCase(string name, Action function)
+            public TestCase(string type, string name, Action function)
             {
+                Type = type;
                 Name = name;
                 Function = function;
             }
@@ -46,6 +44,18 @@ namespace Mechanisms.Tests
             }
         }
 
+        internal static class TestCaseAdder
+        {
+            public static string CurrentType { private get; set; }
+
+            public static void AddCase(string name, Action function)
+            {
+                Expect.NotEmpty(CurrentType, "CurrentType");
+
+                Tests.Add(new TestCase(CurrentType, name, function));
+            }
+        }
+
         private static readonly List<TestCase> Tests = new List<TestCase>();
     }
 
@@ -53,7 +63,7 @@ namespace Mechanisms.Tests
     {
         public static void Is(this string name, Action function)
         {
-            Suite.Add(name, function);
+            Suite.TestCaseAdder.AddCase(name, function);
         }
     }
 }

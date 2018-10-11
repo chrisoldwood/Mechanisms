@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Mechanisms.Host;
 using Mechanisms.Tests;
 

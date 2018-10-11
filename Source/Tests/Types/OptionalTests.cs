@@ -226,7 +226,7 @@ namespace Tests.Types
                 Assert.False(defaultInvoked);
             });
 
-            "the default value is returned when no value exists".Is(() =>
+            "the default value generator is invoked when no value exists".Is(() =>
             {
                 var defaultInvoked = false;
                 Func<string> @default = () =>

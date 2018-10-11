@@ -33,13 +33,13 @@ namespace Mechanisms.Tests
             {
                 var verbose = args.IsSet(verboseSwitch);
 
-                return RunTests(testsAssembly, verbose);
+                return RunTests(testsAssembly, args.Unnamed, verbose);
             };
 
             return Bootstrapper.Run(main, parser);
         }
 
-        private static int RunTests(Assembly testsAssembly, bool verbose)
+        private static int RunTests(Assembly testsAssembly, IList<string> filters,  bool verbose)
         {
             var warnings = new List<string>();
 
@@ -52,8 +52,11 @@ namespace Mechanisms.Tests
 
             foreach (var test in Suite.TestCases)
             {
+                if (filters.Any() && !Included(filters, test))
+                    continue;
+
                 if (verbose)
-                    Console.WriteLine(test.Name);
+                    Console.WriteLine("[{0}] {1}".Fmt(test.Type, test.Name));
 
                 Assert.OnTestCaseStart(test);
 
@@ -98,7 +101,6 @@ namespace Mechanisms.Tests
                     var outcome = (test.Failures != 0) ? "FAILED " : "UNKNOWN";
                     var caller = (test.FirstFailure != null) ? FormatStackFrame(test.FirstFailure) : "";
                     var message = outcome + ": " + test.Name + " " + caller;
-                    
 
                     DebugWriter.WriteLine(message);
                     Console.WriteLine(message);
@@ -107,10 +109,15 @@ namespace Mechanisms.Tests
                 Console.Write("\n");
             }
 
-            foreach (var warning in warnings)
+            if (warnings.Any())
             {
-                DebugWriter.WriteLine(warning);
-                Console.WriteLine(warning);
+                foreach (var warning in warnings)
+                {
+                    DebugWriter.WriteLine(warning);
+                    Console.WriteLine(warning);
+                }
+
+                Console.WriteLine();
             }
 
             var summary = String.Format("Test Results: {0} Passed {1} Failed {2} Unknown",
@@ -137,19 +144,41 @@ namespace Mechanisms.Tests
                     {
                         if (method.IsStatic)
                         {
+                            Suite.TestCaseAdder. CurrentType = FormatTypeName(method);
                             method.Invoke(null, new object[0]);
+                            Suite.TestCaseAdder.CurrentType = null;
                         }
                         else
                         {
-                            // ReSharper disable PossibleNullReferenceException
-                            var name = method.DeclaringType.Name + "." + method.Name;
+                            var name = FormatTypeName(method);
                             var warning = String.Format("WARNING: [TestCases] method '{0}' is not declared static.", name);
                             warnings.Add(warning);
-                            // ReSharper restore PossibleNullReferenceException
                         }
                     }
                 }
             }
+
+            var duplicates = Suite.TestCases.GroupBy(tc => tc.Type + "|" + tc.Name)
+                                            .Where(g => g.Count() > 1)
+                                            .Select(g => g.Key);
+
+            foreach (var duplicate in duplicates)
+            {
+                var warning = String.Format("WARNING: duplicate test case '{0}' detected.", duplicate);
+                warnings.Add(warning);
+            }
+        }
+
+        private static bool Included(IEnumerable<string> filters, Suite.TestCase testCase)
+        {
+            return filters.Any(f => testCase.Type.Contains(f) || testCase.Name.Contains(f));
+        }
+
+        private static string FormatTypeName(MethodInfo method)
+        {
+            // ReSharper disable PossibleNullReferenceException
+            return method.DeclaringType.Name + "|" + method.Name;
+            // ReSharper restore PossibleNullReferenceException
         }
 
         private static string FormatStackFrame(StackFrame stackFrame)

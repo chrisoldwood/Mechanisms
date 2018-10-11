@@ -6,6 +6,4 @@
 
 - Mandatory and optional switches (per verb).
 
-- Duplicate test case names do not generate an error.
-
-- Allow test runner to be invoked with a fixture name to limit the test run.
+- Allow core usage string to be customised, e.g. test runner filters.
