@@ -29,5 +29,10 @@ namespace Mechanisms.Host
 
             return Named[id][0];
         }
+
+        public string ValueOrDefault(int id, string @default)
+        {
+            return IsSet(id) ? Value(id) : @default;
+        }
     }
 }

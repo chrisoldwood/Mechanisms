@@ -136,6 +136,36 @@ namespace Tests.Host
                 Assert.True(result.Named.ContainsKey(Version));
                 Assert.True(result.Unnamed.Count == 0);
             });
+
+            "switches without a name generate a command line exception".Is(() =>
+            {
+                var scenarios = new[] 
+                {
+                    new[] { "-"  },
+                    new[] { "/"  },
+                    new[] { "--" },
+                };
+
+                var switches = new[] { VersionSwitch };
+                
+                foreach (var args in scenarios)
+                {
+                    var exception = Assert.Throws<CmdLineException>(() => CommandLineParser.Parse(args, switches));
+                    Assert.True(exception.Message.Contains("missing"));
+                }
+            });
+
+            "invalid switch names generate a command line exception".Is(() =>
+            {
+                const string name = "invalid-switch";
+
+                var args = new[] { "--" + name };
+
+                var switches = new[] { VersionSwitch };
+                
+                var exception = Assert.Throws<CmdLineException>(() => CommandLineParser.Parse(args, switches));
+                Assert.True(exception.Message.Contains(name));
+            });
         }
 
         [TestCases]
@@ -230,6 +260,26 @@ namespace Tests.Host
                 Assert.True(result.IsSet(Login));
                 Assert.True(result.Value(Login) == "");
             });
+        
+            "the provided value for an optional switch is returned when present".Is(() =>
+            {
+                var switches = new[] { LoginSwitch };
+                var args = new[] { "--login:value" };
+
+                var result = CommandLineParser.Parse(args, switches);
+
+                Assert.True(result.ValueOrDefault(Login, "default") == "value");
+            });
+
+            "the default value for an optional switch is returned when not present".Is(() =>
+            {
+                var switches = new[] { LoginSwitch };
+                var args = new[] { "" };
+
+                var result = CommandLineParser.Parse(args, switches);
+
+                Assert.True(result.ValueOrDefault(Login, "default") == "default");
+            });
         }
 
         [TestCases]
@@ -256,7 +306,7 @@ namespace Tests.Host
                 }
             });
 
-            "a switch will be interpreated as a value rather than a missing value being detected".Is(() =>
+            "a switch will be interpreted as a value rather than a missing value being detected".Is(() =>
             {
                 var switches = new[] { LoginSwitch, VersionSwitch };
                 var args = new[] { "--login", "--version" };
@@ -354,6 +404,33 @@ namespace Tests.Host
                 Assert.True(usage[1] == "-2nd | --second  Second switch");
                 Assert.True(usage[2] == "       --third   Third switch");
                 Assert.True(usage[3] == "-4               Fourth switch");
+            });
+        }
+
+        [TestCases]
+        public static void stateful_parser()
+        {
+            "the list of switches can be formatted".Is(() =>
+            {
+                var switches = new[] { new Switch(AnyId, "s", Switch.NoLongName, "Description"), };
+
+                var parser = new CommandLineParser(EmptyArgList, switches);
+                var usage = parser.FormatSwitches();
+
+                Assert.True(usage.Single() == "-s  Description");
+            });
+
+            "the command line can be parsed".Is(() =>
+            {
+                var args = new[] { "--version" };
+
+                var switches = new[] { VersionSwitch };
+                var parser = new CommandLineParser(args, switches);
+                var result = parser.Parse();
+
+                Assert.True(result.Named.Count == 1);
+                Assert.True(result.Named.ContainsKey(Version));
+                Assert.True(result.Unnamed.Count == 0);
             });
         }
 

@@ -9,8 +9,23 @@ namespace Mechanisms.Host
     using ArgumentList = IList<string>;
     using ArgumentMap = IDictionary<int, IList<string>>;
 
-    public static class CommandLineParser
+    public class CommandLineParser
     {
+        public const int HelpSwitch = -1;
+        public const int VersionSwitch = -2;
+        public const int FirstCustomSwitch = 1;
+
+        public CommandLineParser(IEnumerable<string> arguments, IEnumerable<Switch> switches)
+        {
+            _arguments = arguments.ToArray();
+            _switches = switches.ToArray();
+        }
+
+        public Arguments Parse()
+        {
+            return Parse(_arguments, _switches);
+        }
+
         public static Arguments Parse(IEnumerable<string> arguments, IEnumerable<Switch> switches)
         {
             var argList = arguments.ToArray();
@@ -33,10 +48,19 @@ namespace Mechanisms.Host
                     var name = (valuePos == -1) ? argument.Substring(prefixLen)
                                                 : argument.Substring(prefixLen, valuePos - prefixLen);
 
-                    var @switch = longName ? switchList.Single(s => s.LongName == name)
-                                           : switchList.Single(s => s.ShortName == name);
+                    if (String.IsNullOrEmpty(name))
+                    {
+                        throw new CmdLineException("The switch name for argument '{0}' was missing".Fmt(argument));
+                    }
 
-                    if ((@switch.Type == Switch.ValueType.Boolean) && (valuePos != -1))
+                    var @switch = longName ? switchList.SingleOrDefault(s => s.LongName == name)
+                                           : switchList.SingleOrDefault(s => s.ShortName == name);
+
+                    if (@switch == null)
+                    {
+                        throw new CmdLineException("The switch '{0}' is not recognised".Fmt(name));
+                    }
+                    else if ((@switch.Type == Switch.ValueType.Boolean) && (valuePos != -1))
                     {
                         throw new CmdLineException("The switch '{0}' does not expect a value".Fmt(name));
                     }
@@ -56,6 +80,11 @@ namespace Mechanisms.Host
             }
 
             return new Arguments(named, unnamed);
+        }
+
+        public IEnumerable<string> FormatSwitches()
+        {
+            return FormatSwitches(_switches);
         }
 
         public static IEnumerable<string> FormatSwitches(IEnumerable<Switch> switches)
@@ -155,5 +184,8 @@ namespace Mechanisms.Host
                 }
             }
         }
+
+        private readonly string[] _arguments;
+        private readonly Switch[] _switches;
     }
 }

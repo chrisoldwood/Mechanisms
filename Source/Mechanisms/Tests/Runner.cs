@@ -10,39 +10,37 @@ using Switch = Mechanisms.Host.Switch;
 
 namespace Mechanisms.Tests
 {
+    using ParserMainFunc = Func<Arguments, int>;
+
     public static class Runner
     {
-        public static int Run(Assembly testsAssembly)
+        public static int TestsMain(IEnumerable<string> arguments, Assembly testsAssembly)
         {
-            return Run(testsAssembly, Enumerable.Empty<string>());
-        }
-
-        public static int Run(Assembly testsAssembly, IEnumerable<string> args)
-        {
-            const int helpSwitch = 1;
-            const int verboseSwitch = 2;
+            const int helpSwitch = CommandLineParser.HelpSwitch;
+            const int versionSwitch = CommandLineParser.VersionSwitch;
+            const int verboseSwitch = CommandLineParser.FirstCustomSwitch;
 
             var switches = new[]
             {
                 new Switch(helpSwitch, "h", "help", "Display the program usage"),
+                new Switch(versionSwitch, Switch.NoShortName, "version", "Display the program version"),
                 new Switch(verboseSwitch, "v", "verbose", "Enable verbose test output"),
             };
 
-            var arguments = CommandLineParser.Parse(args, switches);
+            var parser = new CommandLineParser(arguments, switches);
 
-            if (arguments.IsSet(helpSwitch))
+            ParserMainFunc main = (args) => 
             {
-                var runner = Path.GetFileNameWithoutExtension(testsAssembly.Location);
-                Console.WriteLine();
-                Console.WriteLine("USAGE: {0} [options...]", runner);
-                Console.WriteLine();
-                foreach (var line in CommandLineParser.FormatSwitches(switches))
-                    Console.WriteLine(line);
+                var verbose = args.IsSet(verboseSwitch);
 
-                return ExitCode.Success;
-            }
+                return RunTests(testsAssembly, verbose);
+            };
 
-            var verbose = arguments.IsSet(verboseSwitch);
+            return Bootstrapper.Run(main, parser);
+        }
+
+        private static int RunTests(Assembly testsAssembly, bool verbose)
+        {
             var warnings = new List<string>();
 
             RegisterTestCases(testsAssembly, warnings);

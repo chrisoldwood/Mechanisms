@@ -55,6 +55,29 @@ namespace Mechanisms.Tests
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static T Throws<T>(Action statement)
+            where T : Exception
+        {
+            try
+            {
+                statement();
+
+                var caller = new StackFrame(1, true);
+                _currentTest.RecordFailure(caller);
+            }
+            catch (T e)
+            {
+                return e;
+            }
+            catch (Exception)
+            {
+                _currentTest.RecordPass();
+            }
+
+            return null;
+        }
+
         internal static void OnTestCaseStart(Suite.TestCase test)
         {
             _currentTest = test;

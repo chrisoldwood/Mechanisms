@@ -1,9 +1,11 @@
 - Support multi-valued switches in the command line parser.
 
-- Report better messages for command line parsing errors.
-
 - Support verbs with different argument lists.
 
-- Better assert handling for exceptions in tests, e.g. at least type, but also the message.
+- Specify whether unamed arguments are supported and fail if encountered.
 
-- ValueOrDefault() method in command line parser results.
+- Mandatory and optional switches (per verb).
+
+- Duplicate test case names do not generate an error.
+
+- Allow test runner to be invoked with a fixture name to limit the test run.
