@@ -28,7 +28,7 @@ namespace Tests.Host
                     return mainExitCode;
                 };
 
-                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStreams);
 
                 Assert.True(exitCode == mainExitCode);
             });
@@ -40,7 +40,7 @@ namespace Tests.Host
                     throw new Exception("any exception");
                 };
 
-                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                var exitCode = Bootstrapper.Run(main, AnyArgs, AnyStreams);
 
                 Assert.True(exitCode != 0);
             });
@@ -60,7 +60,7 @@ namespace Tests.Host
 
                 TextWriter stderr = new StringWriter();
 
-                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr, AnyDebugWriter);
+                Bootstrapper.Run(main, AnyArgs, new IOStreams(AnyStdIn, AnyStdOut, stderr, AnyDebugWriter));
 
                 Assert.True(stderr.ToString().Contains(message));
             });
@@ -77,7 +77,7 @@ namespace Tests.Host
 
                 TextWriter stderr = new StringWriter();
 
-                Bootstrapper.Run(main, AnyArgs, AnyStdIn, AnyStdOut, stderr, AnyDebugWriter);
+                Bootstrapper.Run(main, AnyArgs, new IOStreams(AnyStdIn, AnyStdOut, stderr, AnyDebugWriter));
 
                 Assert.True(stderr.ToString().Contains(outerMessage));
                 Assert.True(stderr.ToString().Contains(innerMessage));
@@ -100,7 +100,7 @@ namespace Tests.Host
                     return AnyExitCode;
                 };
 
-                Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, AnyStreams);
 
                 Assert.True(invoked);
             });
@@ -118,7 +118,7 @@ namespace Tests.Host
                     return AnyExitCode;
                 };
 
-                Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, AnyStreams);
 
                 Assert.True(parsed);
             });
@@ -136,7 +136,7 @@ namespace Tests.Host
                     return ExitCode.Success;
                 };
 
-                var exitCode = Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                var exitCode = Bootstrapper.Run(main, parser, AnyStreams);
 
                 Assert.False(invoked);
                 Assert.True(exitCode != ExitCode.Success);
@@ -155,7 +155,7 @@ namespace Tests.Host
 
                 TextWriter stderr = new StringWriter();
 
-                Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, stderr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, new IOStreams(AnyStdIn, AnyStdOut, stderr, AnyDebugWriter));
 
                 Assert.True(stderr.ToString().Contains("invalid-switch"));
             });
@@ -173,7 +173,7 @@ namespace Tests.Host
                     throw new CmdLineException("error message");
                 };
 
-                var exitCode = Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                var exitCode = Bootstrapper.Run(main, parser, AnyStreams);
 
                 Assert.True(invoked);
                 Assert.True(exitCode == ExitCode.Failure);
@@ -192,7 +192,7 @@ namespace Tests.Host
 
                 TextWriter stderr = new StringWriter();
 
-                Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, stderr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, new IOStreams(AnyStdIn, AnyStdOut, stderr, AnyDebugWriter));
 
                 Assert.True(stderr.ToString().Contains("an error message"));
             });
@@ -210,7 +210,7 @@ namespace Tests.Host
 
                 TextWriter stdout = new StringWriter();
 
-                Bootstrapper.Run(main, parser, AnyStdIn, stdout, AnyStdErr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, new IOStreams(AnyStdIn, stdout, AnyStdErr, AnyDebugWriter));
 
                 Assert.True(stdout.ToString().Contains("USAGE"));
             });
@@ -228,7 +228,7 @@ namespace Tests.Host
                     return ExitCode.Failure;
                 };
 
-                var exitCode = Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                var exitCode = Bootstrapper.Run(main, parser, AnyStreams);
 
                 Assert.False(invoked);
                 Assert.True(exitCode == ExitCode.Success);
@@ -247,7 +247,7 @@ namespace Tests.Host
 
                 TextWriter stdout = new StringWriter();
 
-                Bootstrapper.Run(main, parser, AnyStdIn, stdout, AnyStdErr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, new IOStreams(AnyStdIn, stdout, AnyStdErr, AnyDebugWriter));
 
                 Assert.True(stdout.ToString().Contains("USAGE"));
                 Assert.True(stdout.ToString().Contains("Tests"));
@@ -267,7 +267,7 @@ namespace Tests.Host
                     return ExitCode.Failure;
                 };
 
-                var exitCode = Bootstrapper.Run(main, parser, AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
+                var exitCode = Bootstrapper.Run(main, parser, AnyStreams);
 
                 Assert.False(invoked);
                 Assert.True(exitCode == ExitCode.Success);
@@ -286,7 +286,7 @@ namespace Tests.Host
 
                 TextWriter stdout = new StringWriter();
 
-                Bootstrapper.Run(main, parser, AnyStdIn, stdout, AnyStdErr, AnyDebugWriter);
+                Bootstrapper.Run(main, parser, new IOStreams(AnyStdIn, stdout, AnyStdErr, AnyDebugWriter));
 
                 Assert.True(stdout.ToString().Contains("0.0.0.1"));
             });
@@ -298,6 +298,7 @@ namespace Tests.Host
         private static readonly TextWriter AnyStdOut = new StringWriter();
         private static readonly TextWriter AnyStdErr = new StringWriter();
         private static readonly TraceListener AnyDebugWriter = new NullTraceListener();
+        private static readonly IOStreams AnyStreams = new IOStreams(AnyStdIn, AnyStdOut, AnyStdErr, AnyDebugWriter);
 
         private const int SomeSwitchId = 1;
         private static readonly Switch SomeSwitch = new Switch(SomeSwitchId, "s", "switch", "test switch");

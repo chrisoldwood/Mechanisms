@@ -58,6 +58,7 @@
     <Compile Include="Host\CommandLineParser.cs" />
     <Compile Include="Host\ExitCode.cs" />
     <Compile Include="Host\InvalidSwitchException.cs" />
+    <Compile Include="Host\IOStreams.cs" />
     <Compile Include="Host\Switch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Assert.cs" />

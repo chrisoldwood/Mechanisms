@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Mechanisms.Extensions;
@@ -7,44 +6,56 @@ using Mechanisms.Extensions;
 namespace Mechanisms.Host
 {
     using ArgsMainFunc = Func<string[], int>;
+    using ArgsStreamsMainFunc = Func<string[], IOStreams, int>;
     using ParserMainFunc = Func<Arguments, int>;
+    using ParserStreamsMainFunc = Func<Arguments, IOStreams, int>;
 
-    public class Bootstrapper
+    public static class Bootstrapper
     {
-        public static int Run(ArgsMainFunc main, string[] args)
+        public static int Run(ArgsMainFunc main, string[] arguments)
         {
-            var debugWriter = new DefaultTraceListener();
+            ArgsStreamsMainFunc mainAdapter = (args, _) => main(args);
 
-            return Run(main, args, Console.In, Console.Out, Console.Error, debugWriter);
+            return Run(mainAdapter, arguments, new IOStreams());
         }
 
-        public static int Run(ArgsMainFunc main, string[] args,
-                              TextReader stdin, TextWriter stdout, TextWriter stderr,
-                              TraceListener debugWriter)
+        public static int Run(ArgsMainFunc main, string[] arguments, IOStreams streams)
+        {
+            ArgsStreamsMainFunc mainAdapter = (args, _) => main(args);
+
+            return Run(mainAdapter, arguments, streams);
+        }
+
+        public static int Run(ArgsStreamsMainFunc main, string[] args, IOStreams streams)
         {
             try
             {
-                return main(args);
+                return main(args, streams);
             }
             catch (Exception e)
             {
                 var message = e.FormatMessage();
-                debugWriter.WriteLine(message);
-                stderr.WriteLine(message);
+                streams.DebugWriter.WriteLine(message);
+                streams.StdErr.WriteLine(message);
                 return ExitCode.Failure;
             }
         }
 
         public static int Run(ParserMainFunc main, CommandLineParser parser)
         {
-            var debugWriter = new DefaultTraceListener();
+            ParserStreamsMainFunc mainAdapter = (args, _) => main(args);
 
-            return Run(main, parser, Console.In, Console.Out, Console.Error, debugWriter);
+            return Run(mainAdapter, parser, new IOStreams());
         }
 
-        public static int Run(ParserMainFunc main, CommandLineParser parser,
-                              TextReader stdin, TextWriter stdout, TextWriter stderr,
-                              TraceListener debugWriter)
+        public static int Run(ParserMainFunc main, CommandLineParser parser, IOStreams streams)
+        {
+            ParserStreamsMainFunc mainAdapter = (args, _) => main(args);
+
+            return Run(mainAdapter, parser, streams);
+        }
+
+        public static int Run(ParserStreamsMainFunc main, CommandLineParser parser, IOStreams streams)
         {
             try
             {
@@ -52,29 +63,29 @@ namespace Mechanisms.Host
 
                 if (arguments.IsSet(CommandLineParser.HelpSwitch))
                 {
-                    WriteUsage(parser, stdout);
+                    WriteUsage(parser, streams.StdOut);
                     return ExitCode.Success;
                 }
                 else if (arguments.IsSet(CommandLineParser.VersionSwitch))
                 {
-                    stdout.WriteLine(Assembly.GetEntryAssembly().GetName().Version.ToString());
+                    streams.StdOut.WriteLine(Assembly.GetEntryAssembly().GetName().Version.ToString());
                     return ExitCode.Success;
                 }
 
-                return main(arguments);
+                return main(arguments, streams);
             }
             catch (CmdLineException e)
             {
                 var message = "ERROR: {0}".Fmt(e.Message);
-                stderr.WriteLine(message);
-                WriteUsage(parser, stdout);
+                streams.StdErr.WriteLine(message);
+                WriteUsage(parser, streams.StdOut);
                 return ExitCode.Failure;
             }
             catch (Exception e)
             {
                 var message = e.FormatMessage();
-                debugWriter.WriteLine(message);
-                stderr.WriteLine(message);
+                streams.DebugWriter.WriteLine(message);
+                streams.StdErr.WriteLine(message);
                 return ExitCode.Failure;
             }
         }
