@@ -55,6 +55,7 @@
     <Compile Include="Host\Arguments.cs" />
     <Compile Include="Host\Bootstrapper.cs" />
     <Compile Include="Host\CmdLineException.cs" />
+    <Compile Include="Host\CommandLineGrammar.cs" />
     <Compile Include="Host\CommandLineParser.cs" />
     <Compile Include="Host\ExitCode.cs" />
     <Compile Include="Host\InvalidSwitchException.cs" />

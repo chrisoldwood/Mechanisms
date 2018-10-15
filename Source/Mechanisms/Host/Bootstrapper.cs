@@ -97,7 +97,7 @@ namespace Mechanisms.Host
             stdout.WriteLine();
             stdout.WriteLine("USAGE: {0} [options...]".Fmt(name));
             stdout.WriteLine();
-            foreach (var line in parser.FormatSwitches())
+            foreach (var line in parser.Grammar.FormatSwitches())
                 stdout.WriteLine(line);
         }
     }

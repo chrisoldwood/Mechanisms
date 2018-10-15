@@ -362,7 +362,7 @@ namespace Tests.Host
             {
                 var switches = new[] { new Switch(AnyId, "s", Switch.NoLongName, "Description"), };
 
-                var usage = CommandLineParser.FormatSwitches(switches);
+                var usage = CommandLineGrammar.FormatSwitches(switches);
 
                 Assert.True(usage.Single() == "-s  Description");
             });
@@ -371,7 +371,7 @@ namespace Tests.Host
             {
                 var switches = new[] { new Switch(AnyId, Switch.NoShortName, "switch", "Description"), };
 
-                var usage = CommandLineParser.FormatSwitches(switches);
+                var usage = CommandLineGrammar.FormatSwitches(switches);
 
                 Assert.True(usage.Single() == "--switch  Description");
             });
@@ -380,7 +380,7 @@ namespace Tests.Host
             {
                 var switches = new[] { new Switch(AnyId, "s", "switch", "Description"), };
 
-                var usage = CommandLineParser.FormatSwitches(switches);
+                var usage = CommandLineGrammar.FormatSwitches(switches);
 
                 Assert.True(usage.Single() == "-s | --switch  Description");
             });
@@ -395,8 +395,8 @@ namespace Tests.Host
                     new Switch(4, "4", Switch.NoLongName, "Fourth switch"),
                 };
 
-                var usage = CommandLineParser.FormatSwitches(switches)
-                                             .ToArray();
+                var usage = CommandLineGrammar.FormatSwitches(switches)
+                                              .ToArray();
 
                 Assert.True(usage.Length == switches.Length);
                 Assert.True(usage[0] == "-f   | --first   First switch");
@@ -414,7 +414,7 @@ namespace Tests.Host
                 var switches = new[] { new Switch(AnyId, "s", Switch.NoLongName, "Description"), };
 
                 var parser = new CommandLineParser(EmptyArgList, switches);
-                var usage = parser.FormatSwitches();
+                var usage = parser.Grammar.FormatSwitches();
 
                 Assert.True(usage.Single() == "-s  Description");
             });
