@@ -13,6 +13,7 @@ del /s *.sln.cache 1>nul 2>nul
 
 :deep_clean
 if /i "%1" == "--all" (
+    del /s  *.user 1>nul 2>nul
     del /s /ah *.suo 1>nul 2>nul
 )
 
