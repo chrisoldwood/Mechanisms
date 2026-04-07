@@ -23,8 +23,8 @@ if not exist "%msbuildFolder%\%msbuildExe%" (
 set msbuild=%msbuildFolder%\%msbuildExe%
 
 :configure
-set solution=Mechanisms.sln
-set configuration=Release
+set solution=Mechanisms.vs2008.sln
+set configuration=Debug
 
 if /i "%1" == "debug" set configuration=Debug
 if /i "%1" == "release" set configuration=Release

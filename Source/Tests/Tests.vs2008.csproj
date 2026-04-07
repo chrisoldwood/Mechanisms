@@ -57,7 +57,7 @@
     <Compile Include="Types\OptionalTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mechanisms\Mechanisms.csproj">
+    <ProjectReference Include="..\Mechanisms\Mechanisms.vs2008.csproj">
       <Project>{0A7BA255-4199-411C-A27A-8DF791D0AB8D}</Project>
       <Name>Mechanisms</Name>
     </ProjectReference>

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechanisms", "Source\Mechanisms\Mechanisms.csproj", "{0A7BA255-4199-411C-A27A-8DF791D0AB8D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechanisms", "Source\Mechanisms\Mechanisms.vs2008.csproj", "{0A7BA255-4199-411C-A27A-8DF791D0AB8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Source\Tests\Tests.csproj", "{2E43DC1F-2CEF-43B3-85D5-171FD05039B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Source\Tests\Tests.vs2008.csproj", "{2E43DC1F-2CEF-43B3-85D5-171FD05039B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{DCAE618E-5C1B-47AB-B659-F2B9BFCEA51B}"
 	ProjectSection(SolutionItems) = preProject
