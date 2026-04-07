@@ -4,3 +4,6 @@ obj
 *.suo
 *.cache
 *.user
+
+#VS Code
+/.vscode
