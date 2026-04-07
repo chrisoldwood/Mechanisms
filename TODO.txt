@@ -2,7 +2,7 @@
 
 - Support verbs with different argument lists.
 
-- Specify whether unamed arguments are supported and fail if encountered.
+- Specify whether unnamed arguments are supported and fail if encountered.
 
 - Mandatory and optional switches (per verb).
 

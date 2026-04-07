@@ -1,0 +1,29 @@
+Development Structure
+---------------------
+
++-Mechanisms
+  +-Source
+    +-Mechanisms
+    +-Tests
+
+The following command will clone the solution:
+
+> git clone https://github.com/chrisoldwood/Mechanisms.git Mechanisms
+
+Command Line Builds
+-------------------
+
+To perform a build:
+
+> pushd Mechanisms
+> Build
+
+Tests
+-----
+
+You can run the unit tests with:
+
+> Source\Tests\bin\Debug\Tests.exe
+
+Chris Oldwood 
+7th April 2026
