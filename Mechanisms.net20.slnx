@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Source/Mechanisms/Mechanisms.net20.csproj" />
+  <Project Path="Source/Tests/Tests.net20.csproj" />
+</Solution>

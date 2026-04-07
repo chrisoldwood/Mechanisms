@@ -13,17 +13,24 @@ The following command will clone the solution:
 Command Line Builds
 -------------------
 
-To perform a build:
+To perform a build for .Net 3.5:
 
-> pushd Mechanisms
-> Build
+> .\Build
+
+For .Net Core use:
+
+> dotnet build Mechanisms.net20.slnx
 
 Tests
 -----
 
-You can run the unit tests with:
+You can run the .Net 3.5 version unit tests with:
 
 > Source\Tests\bin\Debug\Tests.exe
+
+For .Net Core use:
+
+> dotnet run --project Source\Tests\Tests.net20.csproj
 
 Chris Oldwood 
 7th April 2026
