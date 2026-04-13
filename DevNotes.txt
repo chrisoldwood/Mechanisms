@@ -15,6 +15,7 @@ Command Line Builds
 
 To perform a build for .Net 3.5:
 
+> .\Clean --all
 > .\Build
 
 For .Net Core use:
