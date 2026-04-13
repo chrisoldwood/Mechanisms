@@ -6,6 +6,11 @@ Introduction
 
 This is a C# library of reusable classes.
 
+Development
+-----------
+
+See DevNotes.txt.
+
 Contact Details
 ---------------
 
