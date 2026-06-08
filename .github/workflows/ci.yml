@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.x'
+
+      - name: Restore dependencies
+        run: dotnet restore Mechanisms.net20.slnx
+
+      - name: Build code
+        run: dotnet build Mechanisms.net20.slnx --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet run --project Source/Tests/Tests.net20.csproj --configuration Release --no-build
